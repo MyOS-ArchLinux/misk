@@ -62,7 +62,7 @@ case "$2" in
 		exit 0
 		;;
 
-	"/$HOME/"*)
+	"/home/"*)
 		if [ -f "$HOME/.config/thumbnails/$(basename "$2").png" ]; then
 			cp "$HOME/.config/thumbnails/$(basename "$2").png" "$3" 1>/dev/null 2>&1
 			exit 0
@@ -77,8 +77,5 @@ case "$2" in
 		fi
 		;;
 esac
-
-gdbus call --session --dest=org.freedesktop.thumbnails.Cache1 --object-path /org/freedesktop/thumbnails/Cache1 \
-           --method org.freedesktop.thumbnails.Cache1.Delete "['$4']" >/dev/null
 
 exit 0
