@@ -1,4 +1,5 @@
 #!/bin/bash
+
 basename() {
 	# Usage: basename "path" ["suffix"]
 
@@ -13,6 +14,9 @@ basename() {
 
 [[ $# -lt 4 ]] && exit 1
 
+for subdirectory in "normal" "large"; do
+	rm -f "$HOME/.cache/thumbnails/$subdirectory/$(echo -n "$4" | md5sum | cut -d " " -f1).png"
+done
 
 # only if folder is not a symlink
 if [ ! -h "$2" ] ; then
@@ -46,22 +50,24 @@ fi
 case "$2" in
 	*"/Sites/Documents")
 		cp "$HOME/.config/thumbnails/Cloud_Documents.png" "$3" 1>/dev/null 2>&1
+		exit 0
 		;;
 	*"/Sites/Audio")
 		cp "$HOME/.config/thumbnails/Cloud_Audio.png" "$3" 1>/dev/null 2>&1
+		exit 0
 		;;
 	*"/Sites/Pictures")
 		cp "$HOME/.config/thumbnails/Cloud_Pictures.png" "$3" 1>/dev/null 2>&1
+		exit 0
 		;;
 	*"/Sites/Videos")
 		cp "$HOME/.config/thumbnails/Cloud_Videos.png" "$3" 1>/dev/null 2>&1
+		exit 0
 		;;
-
-	*"/Anime/"*"(Not yet aired)"*|*"/Audio/"*"(Not yet aired)"*)
+	*"/Anime/"*"(Not yet aired)"*|*"/Audio Book/"*"(Not yet aired)"*)
 		cp "$HOME/.config/thumbnails/Waiting for.png" "$3" 1>/dev/null 2>&1
 		exit 0
 		;;
-
 	"/home/"*)
 		if [ -f "$HOME/.config/thumbnails/$(basename "$2").png" ]; then
 			cp "$HOME/.config/thumbnails/$(basename "$2").png" "$3" 1>/dev/null 2>&1
@@ -78,4 +84,6 @@ case "$2" in
 		;;
 esac
 
+gdbus call --session --dest=org.freedesktop.thumbnails.Cache1 --object-path /org/freedesktop/thumbnails/Cache1 \
+           --method org.freedesktop.thumbnails.Cache1.Delete "['$4']" >/dev/null
 exit 0
